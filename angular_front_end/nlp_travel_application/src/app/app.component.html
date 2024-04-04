@@ -1,0 +1,32 @@
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      <h2>NLP Travel Application</h2>
+    </div>
+    <div class="chat-body">
+      <div class="chat-messages">
+        <div *ngFor="let message of messages; let i = index" class="chat-message" [ngClass]="{ 'user-message': message.type === 'user', 'bot-message': message.type === 'bot' }">
+          <div class="chat-message-text">
+            <span *ngIf="message.type === 'bot' && message.text.includes(':')" [innerHTML]="message.text | linkify"></span>
+            <span *ngIf="message.type === 'bot' && !message.text.includes(':')">{{ message.text }}</span>
+            <span *ngIf="message.type === 'user'">{{ message.text }}</span>
+            <div *ngIf="message.type === 'bot' && message.text.toLowerCase().includes('infectious disease')" class="charts">
+              <div [id]="'chart-' + i">
+                <app-chart [plotData]="message.plotData ? message.plotData : []"></app-chart>
+              </div>
+            </div>
+          </div>          
+        </div>
+      </div>
+    </div>
+    <div class="chat-footer">
+      <div class="chat-input-container">
+        <input type="text" [(ngModel)]="messageInput" placeholder="Type your message..." />
+        <button (click)="sendMessage()">Send chat ▷</button>
+      </div>
+    </div>
+  </div>
+</body>
