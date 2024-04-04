@@ -1,5 +1,8 @@
 import nltk
 import spacy
+import re
+from datetime import datetime
+import parsedatetime as pdt
 from spacy.matcher import Matcher
 
 def extract_keywords(user_prompt):
@@ -61,7 +64,7 @@ def extract_keywords(user_prompt):
         [{"LOWER": "tissamaharama"}],
         [{"LOWER": "dambulla"}],
         [{"LOWER": "galgamuwa"}],
-        [{"LOWER": "dikwella"}, {"LOWER": "south"}],
+        [{"LOWER": "dikwella"}],
         [{"LOWER": "kalawana"}],
         [{"LOWER": "nikaweratiya"}],
         [{"LOWER": "bakamune"}],
@@ -72,21 +75,33 @@ def extract_keywords(user_prompt):
         [{"LOWER": "point"}, {"LOWER": "pedro"}],
         [{"LOWER": "hakmana"}],
         [{"LOWER": "kegalle"}],
-        [{"LOWER": "gandara"}, {"LOWER": "west"}],
+        [{"LOWER": "gandara"}],
         [{"LOWER": "monaragala"}],
         [{"LOWER": "panadura"}],
         [{"LOWER": "rajagiriya"}],
         [{"LOWER": "kosgama"}],
         [{"LOWER": "keselwatta"}],
-        [{"LOWER": "galkissa"}]
+        [{"LOWER": "galkissa"}],
+        [{"LOWER": "polonnaruwa"}],
+        [{"LOWER": "medirigiriya"}],
+        [{"LOWER": "kilinochchi"}],
+        [{"LOWER": "mannar"}],
+        [{"LOWER": "dehiwala"}]
     ]
 
     # Defined patterns for the day
     date_patterns = [
         [{"LOWER": "tomorrow"}],
         [{"LOWER": "tmrw"}],
+        [{"SHAPE": "dddd-dd-dd"}],
     ]
 
+    # Defined patterns for passenger count
+    passenger_count_patterns = [
+        [{"LIKE_NUM": True}],
+    ]
+
+    matcher.add("PASSENGER_COUNT", passenger_count_patterns)
     matcher.add("GPE", location_patterns)
     matcher.add("DATE", date_patterns)
 
@@ -98,8 +113,6 @@ def extract_keywords(user_prompt):
                 conj_act_pref_index = token.i
                 activity_preference = sentence[conj_act_pref_index:].text
 
-    if activity_preference == None:
-        activity_preference = input("Please enter what sort of activity you would like: ")
     print(token_dep)
     print("Activity preference phrase is : " + str(activity_preference))
 
@@ -110,9 +123,12 @@ def extract_keywords(user_prompt):
             location = ent.text
         elif ent.label_ == "DATE" and date is None:
             date = ent.text
+        elif ent.label_ == "PASSENGER_COUNT" and friend_count is None:
+            friend_count = ent.text
 
-    if location is None or date is None:
+    if location is None or date is None or friend_count is None:
         matches = matcher(doc)
+        date_patterns = r'(th|nd|rd|st)$'
         for match_id, start, end in matches:
             string_id = nlp.vocab.strings[match_id]
             span = doc[start:end] 
@@ -120,8 +136,24 @@ def extract_keywords(user_prompt):
                 location = span.text
             if doc.vocab.strings[match_id] == "DATE":
                 date = span.text                
+            if doc.vocab.strings[match_id] == "PASSENGER_COUNT" and not(re.search(date_patterns, span.text)):
+                friend_count = span.text
+
     print("Location is : " + str(location))
     print("Date is : " + str(date))
+    print("Passenger Count is : " + str(friend_count))
+    date_identifier(str(date))
     return location,date,activity_preference
 
 
+def date_identifier(date_prompt):
+    cal = pdt.Calendar()
+    now = datetime.now()
+    # Remove extra words in date
+    words_to_remove = ["in", "the", "of"]
+    pattern = r'\b(?:{})\b'.format('|'.join(map(re.escape, words_to_remove)))
+    date_string = re.sub(pattern, '', date_prompt, flags=re.IGNORECASE)
+    # Calculate date
+    dt = cal.parseDT(date_string, now)[0]
+    formatted_date = dt.strftime("%Y/%m/%d")
+    print(f"{date_string}: {formatted_date}")

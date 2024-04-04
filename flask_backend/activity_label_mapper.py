@@ -3,14 +3,14 @@ weather_affected_activities = {"amusement_park","mountain_hiking","park","zoo","
 activity_category_dict = {
     "indoor": ["bowling_alley", "movie_theater", "bar", "cafe", "restaurant", "shopping_mall", "museum", "library","karaoke","futsal", "indoor_cricket","night_club","spa","gaming_cafe","badminton"],
     "outdoor": ["mountain_hiking", "park", "zoo","campground","swimming_pool","playground","beach","waterfall","water_sports","amusement_park","jogging_track"],
-    "physical": ["bowling_alley","mountain_hiking","swimming_pool","futsal","indoor_cricket","grounds","sports_complex","playground","beach","jogging_track","badminton"],
-    "non_physical": ["art_gallery","museum","library","movie_theater","aquarium","zoo","bar","cafe","restaurant","shopping_mall","karaoke","park","gaming_cafe"],
-    "engaging": ["grounds","amusement_park","bowling_alley","badminton","gaming_cafe","karaoke","futsal","swimming_pool","beach","indoor_cricket"],
+    "physical": ["bowling_alley","mountain_hiking","swimming_pool","futsal","indoor_cricket","grounds","sports_complex","playground","beach","jogging_track","badminton","park"],
+    "non_physical": ["art_gallery","museum","library","movie_theater","aquarium","zoo","bar","cafe","restaurant","shopping_mall","karaoke","park","gaming_cafe","religous_sites"],
+    "engaging": ["grounds","amusement_park","bowling_alley","badminton","gaming_cafe","karaoke","futsal","swimming_pool","beach","indoor_cricket","religous_sites"],
     "water": ["aquarium","swimming_pool","beach", "fishing","waterfall","water_park","water_sports"],
     "budget":["library","park","restaurant","beach","grounds","cafe"],
     "luxury":["art_gallery","resteraunt","night_club","bar","spa","resort_hotel","water_sports", "casino"],
-    "nature":["park","campground","hiking_area","mountain_hiking","waterfall","beach","safari"],
-    "relaxing":["karaoke","park", "movie_theater", "cafe", "library","bowling", "museum", "art_gallery"]
+    "nature":["park","campground","mountain_hiking","waterfall","beach","safari"],
+    "relaxing":["karaoke","park", "movie_theater", "cafe", "library","bowling", "museum", "art_gallery","religous_sites"]
 }
 
 indoor_priority_dict = {
@@ -28,7 +28,18 @@ indoor_priority_dict = {
     "night_club": 1,
     "spa": 1,
     "gaming_cafe": 4,
-    "badminton": 2
+    "badminton": 2,
+    "mountain_hiking": -5,
+    "park": -5, 
+    "zoo": -5,
+    "campground": -5,
+    "swimming_pool": -5,
+    "playground": -5,
+    "beach": -5,
+    "waterfall": -5,
+    "water_sports": -5,
+    "amusement_park": -5,
+    "jogging_track": -5
 }
 
 outdoor_priority_dict = {
@@ -42,7 +53,22 @@ outdoor_priority_dict = {
     "waterfall": 2,
     "water_sports": 2,
     "amusement_park": 3,
-    "jogging_track": 3
+    "jogging_track": 3,
+    "bowling_alley": -5, 
+    "movie_theater": -5, 
+    "bar": -5, 
+    "cafe": -5, 
+    "restaurant": -5, 
+    "shopping_mall" : -5, 
+    "museum": -5, 
+    "library": -5,
+    "karaoke": -5,
+    "futsal": -5, 
+    "indoor_cricket": -5,
+    "night_club": -5,
+    "spa": -5,
+    "gaming_cafe": -5,
+    "badminton": -5,
 }
 
 physical_priority_dict = {
@@ -56,7 +82,20 @@ physical_priority_dict = {
     "playground": 3,
     "beach": 4,
     "jogging_track": 3,
-    "badminton": 4
+    "badminton": 4,
+    "park": 1,
+    "art_gallery": -5,
+    "museum": -5,
+    "library": -5,
+    "movie_theater": -5,
+    "aquarium": -5,
+    "zoo": -2,
+    "bar": -5,
+    "cafe": -5,
+    "restaurant": -5,
+    "shopping_mall": -4,
+    "karaoke": -4,
+    "gaming_cafe": -4
 }
 
 non_physical_priority_dict = {
@@ -72,7 +111,19 @@ non_physical_priority_dict = {
     "restaurant": 4,
     "shopping_mall": 3,
     "karaoke": 4,
-    "gaming_cafe": 3
+    "gaming_cafe": 3,
+    "religous_sites": 2,
+    "bowling_alley": -4,
+    "mountain_hiking": -5,
+    "swimming_pool": -4,
+    "futsal": -5,
+    "indoor_cricket": -5,
+    "grounds": -5,
+    "sports_complex": -5,
+    "playground": -5,
+    "beach": -4,
+    "jogging_track": -5,
+    "badminton": -5,
 }
 
 engaging_priority_dict = {
@@ -85,7 +136,10 @@ engaging_priority_dict = {
     "futsal": 3,
     "swimming_pool": 2,
     "beach": 2,
-    "indoor_cricket": 3
+    "indoor_cricket": 3,
+    "religous_sites": 3,
+    "movie_theater": -5,
+    "library": -4
 }
 
 water_priority_dict = {
@@ -105,27 +159,38 @@ budget_priority_dict = {
     "beach": 4,
     "grounds": 3,
     "cafe": 3,
+    "resort_hotel": -5,
+    "casino": -5
 }
 
 luxury_priority_dict = {
     "art_gallery": 4,
-    "resteraunt": 4,
+    "restaurant": 4,
     "night_club": 5,
     "bar": 3,
     "spa": 3,
-    "resort_hotel": 4,
+    "resort_hotel": 5,
     "water_sports": 3,
-    "casino": 4
+    "casino": 4,
+    "beach": -5,
+    "grounds": -5
 }
 
 nature_priority_dict = {
     "park": 4,
     "campground": 3,
-    "hiking_area": 4,
     "mountain_hiking": 4,
     "waterfall": 3,
     "beach": 1,
-    "safari": 3
+    "safari": 3,
+    "swimming_pool": -2,
+    "movie_theater": -5,
+    "amusement_park": -5,
+    "bowling_alley": -5,
+    "badminton": -5,
+    "gaming_cafe": -5,
+    "karaoke": -5,
+    "futsal": -5,
 }
 
 relaxing_priority_dict = {
@@ -137,7 +202,10 @@ relaxing_priority_dict = {
     "bowling": 3,
     "museum": 2,
     "art_gallery": 2,
-    "gaming_cafe": 3
+    "religous_sites": 3,
+    "gaming_cafe": 3,
+    "sports_complex": -5,
+    "mountain_hiking": -5
 }
 
 
@@ -150,9 +218,9 @@ def calculate_points(priority_dict, label_value, activity_points):
             activity_points[activity] = points
     return activity_points
 
-def extract_top_activities(activity_categories):
-    activity_category_list = list(zip(activity_categories['labels'], activity_categories['scores']))
-    top_3_labels = activity_category_list[:3]
+def extract_top_activities(top_3_labels):
+    # activity_category_list = list(zip(activity_categories['labels'], activity_categories['scores']))
+    # top_3_labels = activity_category_list[:3]
     activity_points = {}
 
     activity_calculators = {
@@ -172,7 +240,7 @@ def extract_top_activities(activity_categories):
     for key, value in top_3_labels:
         activity_points = activity_calculators[key](value, activity_points)
 
-    sorted_activity_points_dict = dict(sorted(activity_points.items(), key=lambda item: item[1], reverse=True))
+    # sorted_activity_points_dict = dict(sorted(activity_points.items(), key=lambda item: item[1], reverse=True))
 
-    top_5_activities = sorted(activity_points.items(), key=lambda item: item[1], reverse=True)[:5]
-    return top_5_activities
+    top_10_activities = sorted(activity_points.items(), key=lambda item: item[1], reverse=True)[:10]
+    return top_10_activities
