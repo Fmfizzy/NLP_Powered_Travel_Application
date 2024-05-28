@@ -1,34 +1,41 @@
 from transformers import pipeline, AutoModel, AutoTokenizer, AutoModelForSequenceClassification
 from activity_label_mapper import extract_top_activities
+import warnings
 
 
 def classify_activity_preference(location,activity_preference):
+    warnings.filterwarnings("ignore", message="The sentencepiece tokenizer that you are converting to a fast tokenizer uses the byte fallback option which is not implemented in the fast tokenizers.")
     # Load locally saved model
-    loaded_model = AutoModelForSequenceClassification.from_pretrained("J:/IIT Folder/Year_4/FYP/Code/my_model")
-    tokenizer = AutoTokenizer.from_pretrained("J:\IIT Folder\Year_4\FYP\Code\my_model")
+    print("Loading model...")
+    loaded_model = AutoModelForSequenceClassification.from_pretrained("bart_large_mnli")
+    tokenizer = AutoTokenizer.from_pretrained("bart_large_mnli")
     new_classifier = pipeline("zero-shot-classification", model=loaded_model,tokenizer=tokenizer)
+    print("Local Model Loaded")
 
-    # classifier = pipeline("zero-shot-classification", model="MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli")
     sequence_to_classify = activity_preference
     candidate_labels = ["indoor", "outdoor","physical","non_physical", "engaging", "water", "budget", "luxury", "nature", "relaxing"]
     hypothesis_template = "The activity mentioned is {}."
     output = new_classifier(sequence_to_classify, candidate_labels, multi_label=True, hypothesis_template=hypothesis_template)
     print(output)
+    print("\n")
 
-    sentiment, percentage = classify_sentiment(activity_preference, new_classifier)
-    print("The activity preference is :"+ str(activity_preference) +"The sentiment is: " + str(sentiment) + " with a percentage of :" + str(percentage))
+    sentiment = classify_sentiment(activity_preference, new_classifier)
+    print(" The sentiment is: ", sentiment)
+    print("\n")
     
     top_3_labels = get_top_3_activities(output)
-    if sentiment == "negative" and percentage > 0.5:
+    if sentiment['scores'][0] > 0.5 and sentiment['scores'][1] < 0.6 and sentiment['labels'][0] == "negative":
         top_3_labels_with_negation = []
         for label, score in top_3_labels:
             opp_label = map_opposite_terms(label)
             top_3_labels_with_negation.append((opp_label, score))
         top_10_activities = extract_top_activities(top_3_labels_with_negation)
-        print(top_10_activities)
+        print("Negation Included : ",top_10_activities)
+        print("\n")
     else:
         top_10_activities = extract_top_activities(top_3_labels)
-        print(top_10_activities)
+        print("No negation : " ,top_10_activities)
+        print("\n")
     prioritized_activities= prioritize_activities(top_10_activities, new_classifier, activity_preference)
     return prioritized_activities
 
@@ -40,11 +47,12 @@ def get_top_3_activities(activity_categories):
 def classify_sentiment(activity_preference, classifier):
     sequence_to_classify = activity_preference
     candidate_labels = ["positive", "negative"]
-    hypothesis_template = "The requirement of this category is {}."
+    hypothesis_template = "The sentiment of this statement is {}."
     output = classifier(sequence_to_classify, candidate_labels, multi_label=True, hypothesis_template=hypothesis_template)
     sentiment = output['labels'][0]
     percentage = output['scores'][0]
-    return sentiment, percentage
+    print(output)
+    return output
 
 def map_opposite_terms(predicted_label):
     opposite_terms = {
@@ -83,6 +91,7 @@ def prioritize_activities(top_10_activities: List[Tuple[str, float]], classifier
 
     model_suggested_activities = classifier(activity_preference, candidate_labels, multi_label=True, hypothesis_template=hypothesis_template)
     print(model_suggested_activities)
+    print("\n")
 
     # Normalize scores from the first model (top_10_activities)
     normalized_first_model_scores = normalize_scores(top_10_activities)

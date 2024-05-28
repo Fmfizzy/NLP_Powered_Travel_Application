@@ -2,7 +2,8 @@ colombo_dict = {
     "campground": -5,
     "waterfall": -5,
     "safari": -5,
-    "mountain_hiking": -5
+    "mountain_hiking": -5,
+    "religous_sites": -2
 }
 
 gampaha_dict = {
@@ -285,7 +286,6 @@ location_dicts = {
     "Ratnapura": ratnapura_dict,
     "Kegalle": kegalle_dict
 }
-
 
 def add_location_scores(score_list, location):
     location_dict = location_dicts.get(location, None)

@@ -5,7 +5,7 @@ activity_category_dict = {
     "outdoor": ["mountain_hiking", "park", "zoo","campground","swimming_pool","playground","beach","waterfall","water_sports","amusement_park","jogging_track"],
     "physical": ["bowling_alley","mountain_hiking","swimming_pool","futsal","indoor_cricket","grounds","sports_complex","playground","beach","jogging_track","badminton","park"],
     "non_physical": ["art_gallery","museum","library","movie_theater","aquarium","zoo","bar","cafe","restaurant","shopping_mall","karaoke","park","gaming_cafe","religous_sites"],
-    "engaging": ["grounds","amusement_park","bowling_alley","badminton","gaming_cafe","karaoke","futsal","swimming_pool","beach","indoor_cricket","religous_sites"],
+    "engaging": ["grounds","amusement_park","bowling_alley","badminton","gaming_cafe","karaoke","futsal","swimming_pool","beach","indoor_cricket","religous_sites","bar"],
     "water": ["aquarium","swimming_pool","beach", "fishing","waterfall","water_park","water_sports"],
     "budget":["library","park","restaurant","beach","grounds","cafe"],
     "luxury":["art_gallery","resteraunt","night_club","bar","spa","resort_hotel","water_sports", "casino"],
@@ -16,7 +16,7 @@ activity_category_dict = {
 indoor_priority_dict = {
     "bowling_alley": 2, 
     "movie_theater": 5, 
-    "bar": 2, 
+    "bar": 2,
     "cafe": 4, 
     "restaurant": 5, 
     "shopping_mall" : 2, 
@@ -138,6 +138,7 @@ engaging_priority_dict = {
     "beach": 2,
     "indoor_cricket": 3,
     "religous_sites": 3,
+    "bar": 3,
     "movie_theater": -5,
     "library": -4
 }

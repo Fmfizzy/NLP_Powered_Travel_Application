@@ -1,7 +1,7 @@
 import nltk
 import spacy
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 import parsedatetime as pdt
 from spacy.matcher import Matcher
 
@@ -10,6 +10,7 @@ def extract_keywords(user_prompt):
     doc = nlp(user_prompt)
     token_dep = ''
     token_labels = ''
+    date_set = False
 
     location = None
     friend_count = None
@@ -109,7 +110,13 @@ def extract_keywords(user_prompt):
     for sentence in doc.sents:
         for token in sentence:
             token_dep += str(token.dep_) + " "
-            if token.dep_ in ('cc','relcl'):
+            # Check for "day after tomorrow" or "day after tmrw"
+            if token.text.lower() == "day" and token.nbor().text.lower() == "after":
+                next_token = token.nbor(2)
+                if next_token.text.lower() in ["tomorrow", "tmrw"]:
+                    date = (datetime.now() + timedelta(days=2)).strftime("%Y/%m/%d")
+                    date_set = True
+            if token.dep_ in ('cc', 'relcl') and activity_preference is None:
                 conj_act_pref_index = token.i
                 activity_preference = sentence[conj_act_pref_index:].text
 
@@ -121,39 +128,51 @@ def extract_keywords(user_prompt):
         # Identify location and date based on named entity recognition (NER)
         if ent.label_ == "GPE" and location is None:
             location = ent.text
-        elif ent.label_ == "DATE" and date is None:
+        elif ent.label_ == "DATE" and date is None and date_set is False:
             date = ent.text
         elif ent.label_ == "PASSENGER_COUNT" and friend_count is None:
             friend_count = ent.text
 
-    if location is None or date is None or friend_count is None:
+    if location is None or (date is None and date_set is False) or friend_count is None:
         matches = matcher(doc)
         date_patterns = r'(th|nd|rd|st)$'
         for match_id, start, end in matches:
             string_id = nlp.vocab.strings[match_id]
-            span = doc[start:end] 
+            span = doc[start:end]
             if doc.vocab.strings[match_id] == "GPE":
                 location = span.text
-            if doc.vocab.strings[match_id] == "DATE":
-                date = span.text                
+            if doc.vocab.strings[match_id] == "DATE" and date_set is False:
+                date = span.text
             if doc.vocab.strings[match_id] == "PASSENGER_COUNT" and not(re.search(date_patterns, span.text)):
                 friend_count = span.text
 
     print("Location is : " + str(location))
     print("Date is : " + str(date))
     print("Passenger Count is : " + str(friend_count))
-    date_identifier(str(date))
+    print("\n")
+    if date_set is False:
+        if date is None:
+            date = datetime.now().strftime("%Y/%m/%d")
+        else:
+            date = date_identifier(str(date))
     return location,date,activity_preference
 
 
 def date_identifier(date_prompt):
     cal = pdt.Calendar()
     now = datetime.now()
+
     # Remove extra words in date
     words_to_remove = ["in", "the", "of"]
     pattern = r'\b(?:{})\b'.format('|'.join(map(re.escape, words_to_remove)))
     date_string = re.sub(pattern, '', date_prompt, flags=re.IGNORECASE)
+
     # Calculate date
-    dt = cal.parseDT(date_string, now)[0]
-    formatted_date = dt.strftime("%Y/%m/%d")
-    print(f"{date_string}: {formatted_date}")
+    if "tmrw" in date_string.lower():
+        return (now + timedelta(days=1)).strftime("%Y/%m/%d")
+    else:
+        dt = cal.parseDT(date_string, now)[0]
+        formatted_date = dt.strftime("%Y/%m/%d")
+        print(f"The date is - {date_string}: {formatted_date}")
+        print("\n")
+        return formatted_date
